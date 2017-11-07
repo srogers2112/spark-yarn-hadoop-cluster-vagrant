@@ -2,9 +2,9 @@ spark-yarn-hadoop-cluster-vagrant
 ============================
 
 # 1. Introduction
-#### Vagrant project to spin up a cluster of 4 nodes with 64-bit CentOS6.5 Linux virtual machines with Hadoop v2.6.0, Spark v1.6.1. and Hive v1.2.1
+#### Vagrant project to spin up a cluster of 4 nodes with 64-bit CentOS6.5 Linux virtual machines with Hadoop v2.6.5, Spark v2.2.0. (and Hive v1.2.1)
 
-This is suitable as a quick hands-on and develpoment cluster for playing on the hadoop stack. 
+This is suitable as a quick hands-on and development cluster for playing on the hadoop stack.
 Memory Requirement: 16GB RAM.
 Tested on MacBook Pro with 16GB of RAM.
 
@@ -15,14 +15,15 @@ Cluster Configuration:
 3. node3 : HDFS DataNode + YARN NodeManager + Spark Slave
 4. node4 : HDFS DataNode + YARN NodeManager + Spark Slave
 
+
 Hive is installed on all nodes
 
-# 2. Prerequisites 
+# 2. Prerequisites
 1. At least 2GB memory for each VM node. Default script is for 4 nodes, so you need 8GB for the nodes, in addition to the memory for your host machine.
 2. Vagrant 1.7 or higher, Virtualbox 4.3.2 or higher
 3. Preserve the Unix/OSX end-of-line (EOL) characters while cloning this project; scripts will fail with Windows EOL characters.
 4. Project is tested on Mac OSX 10.9 host OS on Macbook Pro with 16GB RAM
-5. The Vagrant box is downloaded to the ~/.vagrant.d/boxes directory. 
+5. The Vagrant box is downloaded to the ~/.vagrant.d/boxes directory.
 
 
 # 3. Downlooads
@@ -31,14 +32,14 @@ Hive is installed on all nodes
 3. Create the vagrant box
 
 ```
-vagrant box add centos65 https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box 
+vagrant box add centos65 https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box
 ```
 
 4. Git clone this project, and change directory (cd) into this project (directory).
-5. [Download Hadoop 2.6 into the /resources directory ] 
-6. [Download Spark 1.6.1 into the /resources directory]
+5. [Download Hadoop 2.6.5 into the /resources directory ]
+6. [Download Spark 2.2.0 into the /resources directory]
 7. [Download Java 1.8 into the /resources directory]
-7. [Download Hive 1.2.1 into the /resources directory]
+7. [Download Hive 1.2.1 into the /resources directory] - currently not installed.
 
 
 # 4. Modifying scripts for adapting to your environment
@@ -46,13 +47,27 @@ You need to modify the scripts to adapt the VM setup to your environment and the
 
 1. `./Vagrantfile`  
 
-- To add/remove slaves, change the number of nodes:  
+ - To add/remove slaves, change the number of nodes:  
 
-```
-numNodes = 4
-```  
+ ```
+ numNodes = 4
+ ```  
 
-- To modify VM memory change the following line:  
+ - To modify the IP addresses of the vm's edit Vagrantfile. Currently IP's addresses
+  are 10.10.55.101 - 10.10.55.104
+  \\ ALso usefule to add this to your `/etc/hosts` file on your host machine:
+  ```
+   # hosts for hadoop/yarn/spark cluster
+   # node1 hadoop nameserver and spark master
+   10.10.55.101   node1
+   # node2 yarn resourceManager + job History + proxyServer
+  v10.10.55.102   node2
+   # node3 and node4 HDFS DataNode + Yarn NodeManager + Spark Slave
+   10.10.55.103   node3
+   10.10.55.104   node4
+  ```
+
+1. To modify VM memory change the following line:  
 
 ```
 v.customize ["modifyvm", :id, "--memory", "1024"]
@@ -128,15 +143,15 @@ ln -s /usr/local/$SPARK_VERSION-bin-hadoop2.6 /usr/local/spark
 - Run `vagrant destroy` when you want to destroy and get rid of the VM to free up your disk space.
 
 # 5. Post Provisioning
-After you have provisioned the cluster, you need to run some commands to initialize your Hadoop cluster. 
+After you have provisioned the cluster, you need to run some commands to initialize your Hadoop cluster.
 
 - SSH into node1 using  `vagrant ssh node-1`
 
-Commands below require root permissions. 
+Commands below require root permissions.
 
 - Change to root access using `sudo su` (or create a new user and grant permissions if you want to use a non-root access. In such a case, you'll need to do this on VMs)
 
-##### 5.1 Issue the following command at node1. 
+##### 5.1 Issue the following command at node1.
 
 ```
 $HADOOP_PREFIX/bin/hdfs namenode -format myhadoop
@@ -179,10 +194,10 @@ $SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
     --master yarn-cluster \
     --num-executors 10 \
     --executor-cores 2 \
-    $SPARK_HOME/lib/spark-examples*.jar \
+    $SPARK_HOME/examples/jars/spark-examples*.jar \
     100
 ```
-	
+
 ### Test Spark using Shell
 Start the Spark shell using the following command. Try NOT to run this command on the slave nodes.
 
@@ -195,10 +210,10 @@ Then go here https://spark.apache.org/docs/latest/quick-start.html to start the 
 # 6. Web UI
 You can check the following URLs to monitor the Hadoop daemons.
 
-1. [NameNode] (http://10.211.55.101:50070/dfshealth.html)
-2. [ResourceManager] (http://10.211.55.102:8088/cluster)
-3. [JobHistory] (http://10.211.55.102:19888/jobhistory)
-4. [Spark] (http://10.211.55.101:8080)
+1. [NameNode] (http://10.10.55.101:50070/dfshealth.html)
+2. [ResourceManager] (http://10.10.55.102:8088/cluster)
+3. [JobHistory] (http://10.10.55.102:19888/jobhistory)
+4. [Spark] (http://10.10.55.101:8080)
 
 # 7. References
 This project was put together with great pointers from all around the internet. All references made inside the files themselves.

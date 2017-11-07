@@ -13,9 +13,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			  v.customize ["modifyvm", :id, "--memory", "2048"]
 			end
 			if i < 10
-				node.vm.network :private_network, ip: "10.211.55.10#{i}"
+				node.vm.network :private_network, ip: "10.10.55.10#{i}"
 			else
-				node.vm.network :private_network, ip: "10.211.55.1#{i}"
+				node.vm.network :private_network, ip: "10.10.55.1#{i}"
 			end
 			node.vm.hostname = "node#{i}"
 			node.vm.provision "shell", path: "scripts/setup-centos.sh"
@@ -46,7 +46,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 				s.path = "scripts/setup-spark-slaves.sh"
 				s.args = "-s 3 -t #{numNodes}"
 			end
-			node.vm.provision "shell", path: "scripts/setup-hive.sh"
+## NO HIVE		node.vm.provision "shell", path: "scripts/setup-hive.sh"
 		end
 	end
 end

@@ -20,8 +20,9 @@ done
 
 function installSSHPass {
 	yum -y install wget
-	wget http://pkgs.repoforge.org/sshpass/sshpass-1.05-1.el6.rf.i686.rpm
-	rpm -ivh sshpass-1.05-1.el6.rf.i686.rpm
+#	wget http://pkgs.repoforge.org/sshpass/sshpass-1.05-1.el6.rf.i686.rpm
+#  wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el6/en/i386/rpmforge/RPMS/sshpass-1.05-1.el6.rf.i686.rpm
+# 	rpm -ivh sshpass-1.05-1.el6.rf.i686.rpm
 	yum -y install sshpass
 }
 
@@ -32,13 +33,13 @@ function overwriteSSHCopyId {
 function setupHosts {
 	echo "modifying /etc/hosts file"
 	for i in $(seq 1 $TOTAL_NODES)
-	do 
+	do
 		if [ $i -lt 10 ]; then
-			entry="10.211.55.10${i} node${i}"
+			entry="10.10.55.10${i} node${i}"
 		elif [ $ i < 100]; then
-			entry="10.211.55.1${i} node${i}"
+			entry="10.10.55.1${i} node${i}"
 		else
-			entry="10.211.55.${i} node${i}"
+			entry="10.10.55.${i} node${i}"
 		fi
 		echo "adding ${entry}"
 		echo "${entry}" >> /etc/hosts
@@ -55,7 +56,7 @@ function createSSHKey {
 function sshCopyId {
 	echo "executing ssh-copy-id"
 	for i in $(seq $START $TOTAL_NODES)
-	do 
+	do
 		node="node${i}"
 		echo "copy ssh key to ${node}"
 		ssh-copy-id -i ~/.ssh/id_rsa.pub $node
